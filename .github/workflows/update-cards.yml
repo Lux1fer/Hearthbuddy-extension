@@ -1,0 +1,88 @@
+name: Update Cards
+
+concurrency:
+  group: create-account
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download latest CardDefs.xml
+        run: |
+          curl -L -o Routines/DefaultRoutine/Silverfish/data/CardDefs.xml \
+            "https://raw.githubusercontent.com/HearthSim/hsdata/master/CardDefs.xml"
+
+          RESPONSE=$(curl -s "https://api.github.com/repos/HearthSim/hsdata/commits/master")
+          SHA=$(echo "$RESPONSE" | jq -r '.sha' | cut -c1-7)
+          MESSAGE=$(echo "$RESPONSE" | jq -r '.commit.message' | head -n1)
+          echo "hsdata_sha=$SHA" >> $GITHUB_OUTPUT
+          echo "hsdata_message=$MESSAGE" >> $GITHUB_OUTPUT
+          echo "Using HSData commit: $SHA - $MESSAGE"
+        id: download-hsdata
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+
+      - name: Update Cards
+        run: |
+          prev_size=""
+          current_size=""
+          unchanged_count=0
+          max_attempts=20
+          
+          while [ $unchanged_count -lt 3 ] && [ $max_attempts -gt 0 ]; do
+              python .github/scripts/slim.py
+              current_size=$(stat -c%s Routines/DefaultRoutine/Silverfish/data/CardDefs.xml)
+              echo "Current file size: $current_size bytes"
+          
+              if [ "$current_size" = "$prev_size" ]; then
+                unchanged_count=$((unchanged_count + 1))
+              else
+                unchanged_count=0
+              fi
+          
+              prev_size=$current_size
+              max_attempts=$((max_attempts - 1))
+              echo "Attempts remaining: $max_attempts | Stable cycles: $unchanged_count/3"
+              echo "----------------------------------------"
+          done
+          
+          python .github/scripts/update_cards.py
+          
+          rm -rf Routines/DefaultRoutine/Silverfish/cards
+          mv Routines/DefaultRoutine/Silverfish/cardsNew Routines/DefaultRoutine/Silverfish/cards
+
+      - name: Commit files
+        run: |
+          HARDWARDID=$(echo "$COMMENT_BODY" | awk 'NR==4')
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          COMMIT_MESSAGE="Update cards to HearthSim/hsdata@${{ steps.download-hsdata.outputs.hsdata_sha }}: ${{ steps.download-hsdata.outputs.hsdata_message }}"
+          
+          if [[ -n $(git status --porcelain) ]]; then
+              git add .
+              git commit -m "$COMMIT_MESSAGE"
+          fi
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+
+      - name: Delete workflow runs
+        uses: Mattraks/delete-workflow-runs@main
+        with:
+          retain_days: 3
+          keep_minimum_runs: 3

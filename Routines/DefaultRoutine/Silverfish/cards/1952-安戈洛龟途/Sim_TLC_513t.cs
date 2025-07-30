@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HREngine.Bots
 {
-	//英雄 牧师 费用：5
+	//英雄 牧师 费用：3
 	//Master Dusk
 	//暮影大师
 	//[x]<b>Battlecry:</b> Summon two3/3 Ninjas with <b>Stealth</b>.Your Ninjas now shuffle backinto your deck when they die.

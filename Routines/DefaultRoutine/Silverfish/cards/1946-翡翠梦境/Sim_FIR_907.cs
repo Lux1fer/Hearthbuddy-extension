@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HREngine.Bots
 {
-	//地标 德鲁伊 费用：4
+	//地标 德鲁伊 费用：5
 	//Amirdrassil
 	//阿梅达希尔
 	//[x]Summon a @-Cost minion.Gain @ Armor. Draw @ |4(card, cards).Refresh @ Mana |4(Crystal, Crystals).<i>(Improves each use!)</i>

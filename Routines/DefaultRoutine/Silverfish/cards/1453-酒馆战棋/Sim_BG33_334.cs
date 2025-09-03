@@ -8,7 +8,7 @@ namespace HREngine.Bots
 	//Vine Climber
 	//攀藤元素
 	//[x]Whenever you play anElemental, give it +{0}/+{1}.<i>(Improved by each minion_______you've played this turn!)</i>___
-	//在你使用一张元素牌后，使其获得+{0}/+{1}。<i>（在本回合中你每使用过一张随从牌都会提升！）</i>
+	//每当你使用一张元素牌，使其获得+{0}/+{1}。<i>（在本回合中你每使用过一张随从牌都会提升！）</i>
 	class Sim_BG33_334 : SimTemplate
 	{
 		

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HREngine.Bots
 {
-	//随从 萨满祭司 费用：2 攻击力：0 生命值：4
+	//随从 萨满祭司 费用：1 攻击力：0 生命值：3
 	//Tortotem
 	//始祖龟图腾
 	//[x]At the end of your turn,get a random minion withmultiple minion types.

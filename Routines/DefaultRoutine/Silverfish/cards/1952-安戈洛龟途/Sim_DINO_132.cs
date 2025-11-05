@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HREngine.Bots
 {
-	//随从 术士 费用：8 攻击力：6 生命值：10
+	//随从 术士 费用：8 攻击力：6 生命值：12
 	//Asphyxiodon
 	//绝息剑龙
 	//[x]<b>Taunt</b>. At the end of yourturn, deal 5 damage to arandom enemy minion.
